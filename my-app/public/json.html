@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Json test</title>
+</head>
+<body>
+    <h5>JSON</h5>
+    <script>
+        
+        //object literal
+        var a = {firstname:"Fergal",lastname:"Hughes",age:21};
+        //json
+        var b = JSON.stringify(a);
+        //json
+        console.log(b);     // printing json 
+        
+        
+        var c = JSON.parse(b);
+        console.log(c); //object literal, printing the object 
+
+    </script>
+    
+</body>
+</html>
