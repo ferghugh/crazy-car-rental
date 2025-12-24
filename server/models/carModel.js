@@ -2,8 +2,10 @@
 
 const db = require("../config/dbconnection");
 
+// Function to get all cars from the database
 const CarModel = {
   getAllCars: function (callback) {
+    // SQL query to select car details along with their model information
     const sql = `
       SELECT 
         c.car_id,
@@ -16,10 +18,13 @@ const CarModel = {
         cm.image_url
       FROM cars c
       JOIN car_model cm ON c.car_model_id = cm.car_model_id `;
+      // Execute the query
     db.query(sql, function (error, results) {
+      // Handle any errors during the query execution
       if (error) {
         return callback(error, null);
       }
+      // Return the results through the callback
       callback(null, results);
     });
   },

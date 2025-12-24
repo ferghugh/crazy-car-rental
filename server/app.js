@@ -1,7 +1,9 @@
 
-console.log("app.js loaded");
+// server/app.js
 const express = require('express');
+// Import CORS middleware
 const cors = require('cors');
+// Create an Express application
 const app = express();
 
 // Middleware
