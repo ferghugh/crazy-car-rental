@@ -1,6 +1,7 @@
 const express = require("express");
-//This creates a small “mini-app” just for login routes.
+//This creates a new router object
 const router = express.Router();
+//Import the LoginController
 const LoginController = require("../controllers/loginController");
 
 // when someone sends Post request to login/test

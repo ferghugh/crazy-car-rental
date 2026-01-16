@@ -1,6 +1,7 @@
 const mysql = require('mysql2'); // changed due to error 'mysql'
 
-const dbconnection = mysql.createConnection({
+// create the connection to database
+const dbconnection = mysql.createConnection({//object with connection details
   host: 'localhost',
   user: 'root',
   password: 'Pfizer53',

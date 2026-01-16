@@ -10,7 +10,7 @@ function CarList() {
   // State to manage selected car and form visibility
   const [selectedCar, setSelectedCar] = useState(null);
   const [showForm, setShowForm] = useState(false);
-  // Reference for the rental form
+  // Reference for the rental form to enable scrolling,so when the form appears it scrolls into view
   const formRef = useRef(null);
   // State to manage rental dates
   const [startDate, setStartDate] = useState("");
@@ -30,7 +30,7 @@ function CarList() {
     }
   }, [showForm]);
 
-  // Handle booking submission
+   
   const handleBooking = () => {
     //check dates are selected
     if (!startDate || !endDate) {
@@ -60,7 +60,7 @@ function CarList() {
       return;
     }
 
-    // Send the rental data to the server
+    // step 1 create a javascript object, Axios will convert it to json and send the http post request to the server
     axios
       .post("http://localhost:5000/api/rentals", {
         car_id: selectedCar.car_id, // Replace with actual customer ID
@@ -163,6 +163,7 @@ function CarList() {
                   onChange={(e) => setEndDate(e.target.value)}
                 />
               </div>
+              {/* A user clicks the "Confirm Rental" button */}
               <button className="btn btn-primary" onClick={handleBooking}>
                 Confirm Rental
               </button>

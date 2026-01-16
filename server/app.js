@@ -7,14 +7,16 @@ const cors = require('cors');
 const app = express();
 
 // Middleware
+//Enable CORS for all routes
 app.use(cors());
-app.use(express.json());
+//Reads the body of incoming requests and parses it as JSON
+app.use(express.json()); // step 2 to handle json data
 
 
 // Import routes
 const loginRoutes = require('./routes/loginRoutes');
 const carRoutes = require("./routes/carRoutes");
-const rentalRoutes = require("./routes/rentalRoutes");
+const rentalRoutes = require("./routes/rentalRoutes");//
 const customerRoutes = require("./routes/customerRoutes");
 
 // Mount routes under /api

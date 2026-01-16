@@ -4,6 +4,7 @@ const express = require('express');
 const router = express.Router();
 // Import the CustomerController
 const db = require("../config/dbconnection");
+// Importing request from http module 
 const { request } = require('http');
 
 // Define the route to get all customers
@@ -20,9 +21,12 @@ router.post('/customers', (req, res) => {
     driver_license
     // extract customer data from request body
 
-   }= req.body;
+   }= req.body;//javascript object
+
+// Validate required fields
    
 if (!firstname || !lastname) {
+  // Send a 400 Bad Request response if first or last name is missing
     return res.status(400).json({ message: "First and last name required" });
   }
 // SQL query to insert a new customer
@@ -39,7 +43,7 @@ if (!firstname || !lastname) {
     (err, result) => {
         // Handle any errors that occur during the query execution
       if (err) {
-        // Check for duplicate entry error (e.g., unique constraint violation)
+        // Check for duplicate entry error eg email or driver license
         if (err.code === "ER_DUP_ENTRY") {
             // Send a 409 Conflict response if email or driver license already exists
           return res.status(409).json({
@@ -51,6 +55,7 @@ if (!firstname || !lastname) {
       }
 
       // Send a success response with the new customer's ID
+      //Takes a javascript object as parameter and converts it to json and sends it to the client
       res.json({
         success: true,
         customer_id: result.insertId

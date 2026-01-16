@@ -65,7 +65,7 @@ export default class Login extends Component {
     Validates login credentials.
     Demo credentials: fergal@example.com / admin
    */
-  onLoginClick = () => {
+  onLoginClick = () => {//This is the function that handles the login process
     console.log(this.state);
     // Check credentials 
     if (

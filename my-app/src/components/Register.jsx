@@ -26,9 +26,13 @@ function Register() {
       alert("First name and last name are required.");
       return;
     }
+    //send the json data to the server
     axios
+    // Send a POST request to the server to register a new customer through a json api
       .post("http://localhost:5000/api/customers", formData)
+      // Handle successful registration
       .then((response) => {
+        // You can handle success (e.g., show a message or redirect)
         alert("Registration successful!");
         setFormData({
           firstname: "",
@@ -128,7 +132,7 @@ function Register() {
               value={formData.driver_license}
               onChange={handleChange}
             />
-
+            
             <button className="btn btn-primary" type="submit">
               Register
             </button>
