@@ -28,7 +28,7 @@ function Register() {
     }
     //send the json data to the server
     axios
-    // Send a POST request to the server to register a new customer through a json api
+      // Send a POST request to the server to register a new customer through a json api
       .post("http://localhost:5000/api/customers", formData)
       // Handle successful registration
       .then((response) => {
@@ -132,7 +132,7 @@ function Register() {
               value={formData.driver_license}
               onChange={handleChange}
             />
-            
+
             <button className="btn btn-primary" type="submit">
               Register
             </button>

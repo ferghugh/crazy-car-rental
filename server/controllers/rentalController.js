@@ -1,5 +1,6 @@
 // server/controllers/rentalController.js
 // Import the RentalModel
+
 const RentalModel = require("../models/rentalModel");
 
 // The controller to handle rental related requests
@@ -24,6 +25,24 @@ const RentalController = {
       });
     });
   },
+
+// GET current rentals
+getCurrentRentals: function (req, res) {
+  RentalModel.getCurrentRentals(function (error, result) {
+    if (error) {
+      console.error("Error fetching current rentals:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Error fetching current rentals"
+      });
+    }
+  
+  res.json({
+    success: true,
+    rentals: result
+  });
+  });
+}
 };
 
 module.exports = RentalController;

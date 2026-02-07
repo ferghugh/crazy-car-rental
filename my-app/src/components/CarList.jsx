@@ -30,7 +30,6 @@ function CarList() {
     }
   }, [showForm]);
 
-   
   const handleBooking = () => {
     //check dates are selected
     if (!startDate || !endDate) {
@@ -93,7 +92,7 @@ function CarList() {
       <div className="row">
         {cars.map(
           (
-            car // repeat for each car
+            car, // repeat for each car
           ) => (
             // Card for each car
             <div key={car.car_id} className="col-md-6 col-lg-4 mb-3">
@@ -133,7 +132,7 @@ function CarList() {
                 </div>
               </div>
             </div>
-          )
+          ),
         )}
       </div>
       {/* CLOSE row HERE */}

@@ -1,28 +1,54 @@
+
 const LoginModel = require("../models/loginModel");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const LoginController = {
 
- 
-  login: function(request, response) { 
-    console.log("incoming body:" + request.body); 
-
+  login: function (request, response) {
     const { email, password } = request.body;
-   
-    LoginModel.checkLogin(email, password, function(error, result) {
+
+    LoginModel.checkLogin(email, function (error, result) {
       if (error) {
         console.error("Login error:", error);
         return response.status(500).json({ success: false, error: "Server issue" });
       }
 
-      console.log("DB result",request);
-
-      if (result.length > 0) {
-        response.json({ success: true, message: "Logged in successfully" });
-      } else {
-        response.json({ success: false, message: "Invalid eamil or password" });
+      if (result.length === 0) {
+        return response.status(401).json({
+          success: false,
+          message: "Invalid email or password"
+        });
       }
-    });
 
+      const user = result[0];
+
+      // compare hashed password
+      const isMatch = bcrypt.compareSync(password, user.password);
+      if (!isMatch) {
+        return response.status(401).json({
+          success: false,
+          message: "Invalid email or password"
+        });
+      }
+
+      // create the jwt
+      const token = jwt.sign(
+        { id: user.login_id, role: user.role },
+        process.env.JWT_SECRET,
+        { expiresIn: "1d" }
+      );
+
+      response.json({
+        success: true,
+        token,
+        user: {
+          id: user.login_id,
+          role: user.role,
+          email: user.email
+        }
+      });
+    });
   }
 
 };

@@ -14,8 +14,6 @@ module.exports = router;
 
 //Routes define the endpoints that your frontend will call.
 
-//Explanation:
-
 //POST /login endpoint for your React frontend to send login data.
 
 //Calls the controller function loginController.login.

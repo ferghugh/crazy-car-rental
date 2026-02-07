@@ -23,6 +23,27 @@ const RentalModel = {
       callback
     );
   },
+
+  // get all the rentals
+getAllRentals: function (callback) {
+    const sql = "SELECT rental_id, car_id, customer_id, start_date, end_date, total_price FROM rentals  ORDER BY start_date DESC";
+    db.query(sql, callback);
+  },
+
+
+// get current (active) rentals
+getCurrentRentals: function (callback) {
+  const sql = `
+    SELECT rental_id, car_id, customer_id, start_date, end_date, total_price
+    FROM rentals
+    WHERE CURDATE() BETWEEN start_date AND end_date
+    ORDER BY start_date
+  `;
+
+  db.query(sql, callback);
+}
 };
+
+
 
 module.exports = RentalModel;
