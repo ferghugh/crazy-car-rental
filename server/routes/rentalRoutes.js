@@ -9,8 +9,9 @@ const RentalController = require("../controllers/rentalController"); // Importin
 // Define the route to create a new rental
 router.post("/rentals", RentalController.createRental);// when a POST request is made to /rentals, call createRental function in the controller
 
-// GET current rentals
-router.get("/rentals/current", RentalController.getCurrentRentals);
 
+// GET current rentals
+router.get("/current", RentalController.getCurrentRentals);
+router.get("/", RentalController.getAllRentals);
 // Export the router to be used in app.js
 module.exports = router;

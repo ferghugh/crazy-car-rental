@@ -28,7 +28,7 @@ module.exports = LoginModel;
 //The model defines how to interact with the database. 
 //It’s responsible for fetching, inserting, updating, or deleting data.
 
-//Example for your login table:
+//Example for the login table:
 
 // a user record should contain email,hashed password and role
 

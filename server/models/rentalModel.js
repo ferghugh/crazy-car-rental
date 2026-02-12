@@ -26,19 +26,30 @@ const RentalModel = {
 
   // get all the rentals
 getAllRentals: function (callback) {
-    const sql = "SELECT rental_id, car_id, customer_id, start_date, end_date, total_price FROM rentals  ORDER BY start_date DESC";
+    const sql = "SELECT rental_id, car_id, customer_id, start_date, end_date, total_price FROM rentals ORDER BY start_date DESC";
     db.query(sql, callback);
   },
 
 
-// get current (active) rentals
+// get current  active rentals
 getCurrentRentals: function (callback) {
   const sql = `
-    SELECT rental_id, car_id, customer_id, start_date, end_date, total_price
+    SELECT 
+      rental_id,
+      car_id,
+      customer_id,
+      start_date,
+      end_date,
+      total_price,
+      CASE
+        WHEN start_date > CURDATE() THEN 'Upcoming'
+        WHEN start_date <= CURDATE() AND end_date >= CURDATE() THEN 'Current'
+        ELSE 'Completed'
+      END AS status
     FROM rentals
-    WHERE CURDATE() BETWEEN start_date AND end_date
-    ORDER BY start_date
+    ORDER BY start_date DESC
   `;
+
 
   db.query(sql, callback);
 }

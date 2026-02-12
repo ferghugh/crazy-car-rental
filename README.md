@@ -14,9 +14,11 @@ See ERD folder and Screenshots
 A Node.js and Express server were created to the Rest API endpoints.The API handles customer registration, login,
 car and rental creation.The server side validation is implemented to ensure the required fields are provided to prevent duplicated entries by a user.The back end communicates with the MySQL database using queries.
 
-## Front end Development
+## Front end Development 
 
 The front end was build using React and React Router.The application consists of multiple pages from Home,Login,Register etc. Axios is used to communicate with the back end API.Client side validation is implemented for forms that including date validation for bookings so a user cant book from a past date etc.
+
+
 
 ## Key features
 
