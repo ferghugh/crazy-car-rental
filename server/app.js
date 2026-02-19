@@ -27,18 +27,16 @@ const rentalRoutes = require("./routes/rentalRoutes");//
 const customerRoutes = require("./routes/customerRoutes");
 const currencyRoutes = require("./routes/currencyRoutes.js");
 const weatherRoutes = require("./routes/weatherRoutes.js");
-const paymentRoutes =  require( "./routes/paymentRoutes.js")
 const contactRoutes = require("./routes/contactRoutes.js");
 
 // Mount routes under /api
 app.use("/api/auth",authRoutes);
 app.use('/api', loginRoutes);
 app.use("/api", carRoutes);
-app.use("/api", rentalRoutes);
+app.use("/api/rentals", rentalRoutes);
 app.use("/api", customerRoutes);
 app.use("/api/currency",currencyRoutes);
 app.use("/api",weatherRoutes);
-app.use("/api/payments", paymentRoutes);
 app.use("/api",contactRoutes);
 
 

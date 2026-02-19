@@ -36,7 +36,7 @@ export default function Login() {
       localStorage.setItem("token", response.data.token);
       // store the role
       localStorage.setItem("role", response.data.user.role);
-
+      // create new event
       window.dispatchEvent(new Event("storage"));
 
       // message

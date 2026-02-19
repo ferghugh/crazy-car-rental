@@ -4,30 +4,49 @@ const db = require("../config/dbconnection");
 const RegisterController = {
 
   register: function (req, res) {
-    const { email, password } = req.body;
 
-    //  validation
-    if (!email || !password) {
-      return res.status(400).json({ message: "Missing email or password" });
+    const { email, password, firstname, lastname } = req.body;
+
+    if (!email || !password || !firstname || !lastname) {
+      return res.status(400).json({
+        message: "Missing required fields"
+      });
     }
 
-    // Hash the password
     const hashedPassword = bcrypt.hashSync(password, 10);
 
-    const sql =
-      "INSERT INTO login (email, password, role) VALUES (?, ?, 'user')";
+    // Step 1: Insert into customers
+    const customerSql = `
+      INSERT INTO customers (firstname, lastname, email)
+      VALUES (?, ?, ?)
+    `;
 
-    db.query(sql, [email, hashedPassword], (error, result) => {
+    db.query(customerSql, [firstname, lastname, email], (error, customerResult) => {
+
       if (error) {
-        // Duplicate email (unique constraint)
-        return res
-          .status(409)
-          .json({ message: "Account already exists" });
+        return res.status(500).json({ message: "Customer creation failed" });
       }
 
-      res.json({
-        success: true,
-        message: "Account created successfully"
+      const newCustomerId = customerResult.insertId;
+
+      // Step 2: Insert into login
+      const loginSql = `
+        INSERT INTO login (email, password, role, customer_id)
+        VALUES (?, ?, 'user', ?)
+      `;
+
+      db.query(loginSql, [email, hashedPassword, newCustomerId], (error2) => {
+
+        if (error2) {
+          return res.status(409).json({
+            message: "Account already exists"
+          });
+        }
+
+        res.json({
+          success: true,
+          message: "Account created successfully"
+        });
       });
     });
   }

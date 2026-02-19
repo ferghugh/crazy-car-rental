@@ -6,23 +6,22 @@ import { isAuthenticated, getUserRole } from "../utils/auth";
 function Dashboard() {
   const [rentals, setRentals] = useState([]);
   const [loading, setLoading] = useState(true);
-
   
-
-  useEffect(() => {
-    axios.get("http://localhost:5000/api/current")
-      .then((res) => {
-        if (res.data.success) {
-          setRentals(res.data.rentals);
-        }
-      })
-      .catch((err) => {
-        console.error("Error fetching current rentals:", err);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, []);
+ useEffect(() => {
+  axios
+    .get("http://localhost:5000/api/rentals/current")
+    .then((res) => {
+      if (res.data.success) {
+        setRentals(res.data.rentals);
+      }
+    })
+    .catch((err) => {
+      console.error("Error fetching rentals:", err);
+    })
+    .finally(() => {
+      setLoading(false);
+    });
+}, []);
 
   // auth will check now!
   if (!isAuthenticated() || getUserRole() !== "admin") {
@@ -30,11 +29,12 @@ function Dashboard() {
   }
 
   return (
+    // Admin dashboard showing current rentals
     <div className="container mt-4">
       <h2 className="mb-4">Admin Dashboard</h2>
 
       <h4>Current Rentals</h4>
-
+      
       {loading ? (
         <p>Loading rentals...</p>
       ) : rentals.length === 0 ? (
@@ -50,7 +50,7 @@ function Dashboard() {
                   </h5>
                   {/* status */}
                   <span className={`badge mb-2 ${
-                    rental.status === "current"
+                    rental.status === "Current"
                     ? "bg-success"
                     : rental.status === "Upcoming"
                     ? "bg-warning text-dark"

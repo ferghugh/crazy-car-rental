@@ -1,36 +1,42 @@
-import { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import axios from "axios";
+import { getToken } from "../utils/auth";
 
-export default function Success() {
-  const [message, setMessage] = useState("Processing your booking...");
+const Success = () => {
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const carId = params.get("carId");
-    const start = params.get("start");
-    const end = params.get("end");
+    const confirmRental = async () => {
+      try {
+        const paymentIntent = new URLSearchParams(window.location.search)
+          .get("payment_intent");
 
-    // Save rental AFTER payment succeeds
-    axios.post("http://localhost:5000/api/rentals", {
-      car_id: 13,
-      customer_id: 2,
-      start_date: "2026-03-10",
-      end_date: "2026-03-12",
-      total_price: 500
-    })
-    .then(() => {
-      setMessage("Your rental has been booked successfully!");
-    })
-    .catch(() => {
-      setMessage("Payment succeeded, but booking failed. Please contact support.");
-    });
+        console.log("Payment Intent:", paymentIntent);
 
+        if (!paymentIntent) {
+          console.log("No payment_intent found in URL");
+          return;
+        }
+
+        await axios.post(
+          "http://localhost:5000/api/rentals/confirm",
+          { payment_intent: paymentIntent },
+          {
+            headers: {
+              Authorization: `Bearer ${getToken()}`
+            }
+          }
+        );
+
+        console.log("Rental confirmed and saved!");
+      } catch (error) {
+        console.error("Error confirming rental:", error);
+      }
+    };
+
+    confirmRental();
   }, []);
 
-  return (
-    <div className="container mt-5">
-      <h2>Payment Successful</h2>
-      <p>{message}</p>
-    </div>
-  );
-}
+  return <h1>Payment Successful!!</h1>;
+};
+
+export default Success;

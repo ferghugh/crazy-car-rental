@@ -52,9 +52,18 @@ getCurrentRentals: function (callback) {
 
 
   db.query(sql, callback);
+},
+
+checkCarAvailability: function (car_id, start_date, end_date, callback) {
+  const sql = `
+    SELECT * FROM rentals
+    WHERE car_id = ?
+    AND start_date <= ?
+    AND end_date >= ?
+  `;
+
+  db.query(sql, [car_id, end_date, start_date], callback);
 }
 };
-
-
 
 module.exports = RentalModel;

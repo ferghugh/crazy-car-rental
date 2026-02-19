@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { isAuthenticated, getUserRole } from "../utils/auth.js";
+import { isAuthenticated, getUserRole, getToken } from "../utils/auth.js";
 import axios from "axios";
-
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import CheckoutForm from "./CheckoutForm.jsx";
@@ -15,16 +14,13 @@ function CarList() {
   const [showForm, setShowForm] = useState(false);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [showPayment, setShowPayment] = useState(false);
   const formRef = useRef(null);
-  const[showPayment,setShowPayment] = useState(false);
 
   const navigate = useNavigate();
   const loggedIn = isAuthenticated();
-  const role = getUserRole();
 
-  
-
-   // Fetch the list of cars from the server when the component mounts
+  // Fetch cars
   useEffect(() => {
     axios
       .get("http://localhost:5000/api/cars")
@@ -32,87 +28,87 @@ function CarList() {
       .catch((error) => console.error(error));
   }, []);
 
-  //Scroll to the rental form when it is shown
+  // Scroll to form
   useEffect(() => {
     if (showForm && formRef.current) {
       formRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [showForm]);
 
-  // Handle Rent Now
-  const handleRentNow = async (car) => {
+  // Step 1: Show form only
+  const handleRentNow = (car) => {
     if (!loggedIn) {
+      alert("Please log in to rent a car.");
       navigate("/login");
       return;
     }
 
-    // Fetch Stripe clientSecret BEFORE showing form
-    const res = await axios.post(
-      "http://localhost:5000/api/payments/create-payment-intent",
-      { amount: car.price_per_day * 100 }
-    );
-
-    setSelectedCar({
-      ...car,
-      clientSecret: res.data.clientSecret,
-    });
-
-    setShowForm(true);
-  };
-
-  // Handle booking (your existing logic)
-  const handleBooking = () => {
-    if (!startDate || !endDate) {
-      alert("Please select a start and an end date.");
+    if (getUserRole() !== "user") {
+      alert("Only users can rent cars.");
       return;
     }
-    //calculate number of days
+
+    setSelectedCar(car);
+    setShowForm(true);
+    setShowPayment(false);
+  };
+
+  // Step 2: Validate dates + create payment intent
+  const handleProceedToPayment = async () => {
+    if (!startDate || !endDate) {
+      alert("Please select both start and end dates.");
+      return;
+    }
+
     const start = new Date(startDate);
     const end = new Date(endDate);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-  //check start date is not in the past
+
     if (start < today) {
-      alert("Start date must be today or in the future.");
+      alert("Start date cannot be in the past.");
       return;
     }
-    //calculate total price
-    const daysBooked = (end - start) / (1000 * 60 * 60 * 24);
-   //check end date is after start date
-    if (daysBooked <= 0) {
+
+    if (end <= start) {
       alert("End date must be after start date.");
       return;
     }
-//step 1 create a javascript object, Axios will convert it to json and send the http post request to the server
-    axios
-      .post("http://localhost:5000/api/rentals", {
-        car_id: selectedCar.car_id,
-        customer_id: 1,
-        start_date: startDate,
-        end_date: endDate,
-        total_price: selectedCar.price_per_day * daysBooked,
-      })
-      .then(() => {
-        alert("Rental booked successfully!");
-        setShowForm(false);
-        setStartDate("");
-        setEndDate("");
-      })
-      .catch((error) => {
-        console.error("Error booking rental:", error);
-        alert("Failed to book rental.");
+
+    try {
+      const result = await axios.post(
+        "http://localhost:5000/api/rentals/create-payment-intent",
+        {
+          car_id: selectedCar.car_id,
+          start_date: startDate,
+          end_date: endDate
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`
+          }
+        }
+      );
+
+      setSelectedCar({
+        ...selectedCar,
+        clientSecret: result.data.clientSecret
       });
+
+      setShowPayment(true);
+
+    } catch (error) {
+      console.error(error.response?.data || error);
+      alert(error.response?.data?.message || "Payment setup failed.");
+    }
   };
-  // Render the list of cars
+
   return (
-       // Container for the car list
     <div className="container mt-4">
       <h2>Crazy Car Rental - Available Cars</h2>
 
-      {/* Car Grid */}
       <div className="row">
         {cars.map((car) => (
-            // Card for each car
           <div key={car.car_id} className="col-md-6 col-lg-4 mb-3">
             <div className="card h-100">
               <div className="card-body">
@@ -150,7 +146,6 @@ function CarList() {
         ))}
       </div>
 
-      {/* Rental Form (only appears once, outside the grid) */}
       {showForm && selectedCar && (
         <div className="card mt-4" ref={formRef}>
           <div className="card-body">
@@ -178,20 +173,23 @@ function CarList() {
               />
             </div>
 
-            <button className="btn btn-primary" onClick={() => setShowPayment(true)}>
+            <button
+              className="btn btn-primary"
+              onClick={handleProceedToPayment}
+            >
               Proceed to payment
             </button>
 
-            {/* Stripe Checkout */}
             {showPayment && selectedCar.clientSecret && (
               <Elements
                 stripe={stripePromise}
                 options={{ clientSecret: selectedCar.clientSecret }}
               >
-                <CheckoutForm 
-                carId={selectedCar.car_id}
-                startDate={startDate}
-                endDate={endDate} />
+                <CheckoutForm
+                  carId={selectedCar.car_id}
+                  startDate={startDate}
+                  endDate={endDate}
+                />
               </Elements>
             )}
           </div>

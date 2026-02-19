@@ -9,7 +9,8 @@ const RegisterController = require("../controllers/registerController");
 //Checks if user is authenticated and returns user info
 router.get("/me", authMiddleware, (req, res) => {
   res.json({
-    id: req.user.id,
+    login_id: req.user.login_id,
+    customer_id: req.user.customer_id,
     role: req.user.role
   });
 });

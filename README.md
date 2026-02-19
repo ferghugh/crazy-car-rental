@@ -133,6 +133,7 @@ These 2 table exist in the database:
 Technician Table to show if car is in for repairs or checked over before release back to available to rent
 Cleaning Table for when car is returned and needs to be cleaned
 
+
 ## Demonstration of the crazy car rental app recorded on snippet and uploaded to you tube:
 
 https://youtu.be/A5Na2Wo-Rr4?si=uuOBwL5tNiY5wPRZ
